@@ -6,18 +6,14 @@
  * Time: 23:43
  */
 
+session_start();
+
 $pdo = new PDO(
     'sqlite::memory:',
     null,
     null,
     array(PDO::ATTR_PERSISTENT => true)
 );
-
-$pdo->exec("drop table users");
-$pdo->exec("CREATE TABLE IF NOT EXISTS users (username varchar(255), password varchar(255))");
-$pdo->exec("insert into users values ('admin', '1234')");
-$pdo->exec("insert into users values ('Tony Stark', '1R0nM4n')");
-$pdo->exec("insert into users values ('Bruce Banner', 'HULK42')");
 
 $users = $pdo->query("select * from users");
 
@@ -28,6 +24,10 @@ if ($_POST) {
 
     $result = $pdo->query($sql);
     $login = $result->fetch();
+
+    if (isset($login) && count($login) > 1) {
+        $_SESSION['user'] = $login['username'];
+    }
 }
 
 ?>
@@ -37,6 +37,11 @@ if ($_POST) {
 <body>
 <div class="container">
     <h1>Super secret control panel</h1>
+    <?php
+        if (isset($_SESSION['user'])) {
+            echo "<h3>Logged user: <span class='label label-primary'>{$_SESSION['user']}</span></h3>";
+        }
+    ?>
     <form action="" method="post" class="form-inline">
         <fieldset>
             <label for="username">Name</label>
@@ -81,6 +86,7 @@ INFO;
 </div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 
 </body>
 

